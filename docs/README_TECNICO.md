@@ -46,3 +46,19 @@ gerenciador-sites/
 - Implementar criptografia AES-256 real
 - Interface gráfica (Tkinter ou Flask)
 - Testes automatizados 
+
+## Segurança e Criptografia
+
+- As senhas das credenciais são criptografadas com AES-256 (Fernet) usando a biblioteca cryptography.
+- A chave de criptografia é gerada automaticamente e armazenada no arquivo `.env` na raiz do projeto (variável FERNET_KEY).
+- O módulo responsável é `backend/crypto/crypto_service.py`.
+- O CRUD de credenciais utiliza as funções `encrypt` e `decrypt` para proteger os dados sensíveis. 
+
+## Backup e Restauração
+- O sistema permite exportar todas as credenciais do usuário autenticado para um arquivo `.backup` criptografado.
+- O backup pode ser restaurado em qualquer instalação do sistema, desde que a chave de criptografia seja a mesma.
+- Durante a importação, o sistema evita duplicidade de credenciais (mesmo site, usuário e URL).
+
+## Segurança Adicional
+- Cada credencial armazena a data da última alteração (last_modified).
+- O sistema alerta visualmente o usuário sobre senhas consideradas fracas e senhas não alteradas há mais de 90 dias. 

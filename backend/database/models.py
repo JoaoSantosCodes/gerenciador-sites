@@ -1,8 +1,9 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy import create_engine
 import os
+from datetime import datetime
 
 Base = declarative_base()
 
@@ -22,6 +23,7 @@ class Credential(Base):
     username = Column(String(150))
     password_encrypted = Column(String(255), nullable=False)
     notes = Column(String(255))
+    last_modified = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     user = relationship('User', backref='credentials')
 

@@ -18,6 +18,9 @@ python -m backend.app
 - Gerenciamento de credenciais (CRUD)
 - Criptografia (placeholder, será AES-256)
 - Pronto para expansão com interface gráfica
+- Backup e restauração de credenciais criptografadas
+- Proteção contra duplicidade na importação
+- Alerta visual para senhas fracas e senhas antigas
 
 ## Contribuição
 Consulte a [documentação técnica](docs/README_TECNICO.md#como-contribuir).

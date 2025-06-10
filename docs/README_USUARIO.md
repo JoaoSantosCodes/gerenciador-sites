@@ -35,6 +35,15 @@ Este sistema permite gerenciar credenciais de sites e senhas de forma segura, vi
    - Nunca compartilhe sua senha mestre.
    - As senhas das credenciais são armazenadas de forma criptografada.
 
+## Backup e Restauração
+- Use o botão "Exportar/Backup" para salvar todas as suas credenciais em um arquivo seguro.
+- Use o botão "Importar/Restaurar" para recuperar credenciais de um backup.
+- O sistema evita duplicidade de credenciais ao importar.
+
+## Segurança
+- O sistema alerta sobre senhas fracas e senhas não alteradas há mais de 90 dias.
+- Recomenda-se atualizar suas senhas periodicamente para maior proteção.
+
 ## Observações
 - O sistema é beta e será expandido com interface gráfica e recursos avançados.
 - Em caso de dúvidas, consulte a documentação técnica ou abra uma issue no GitHub. 

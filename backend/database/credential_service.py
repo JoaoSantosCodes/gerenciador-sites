@@ -1,5 +1,7 @@
 from backend.database.models import Credential, SessionLocal
+from backend.crypto.crypto_service import encrypt, decrypt
 from sqlalchemy.orm import Session
+from datetime import datetime
 
 # Placeholder para criptografia (implementar depois)
 def encrypt_password(password: str) -> str:
@@ -11,14 +13,15 @@ def decrypt_password(password_encrypted: str) -> str:
 
 def add_credential(user_id: int, site_name: str, url: str, username: str, password: str, notes: str = ""):
     session = SessionLocal()
-    password_encrypted = encrypt_password(password)
+    password_encrypted = encrypt(password)
     cred = Credential(
         user_id=user_id,
         site_name=site_name,
         url=url,
         username=username,
         password_encrypted=password_encrypted,
-        notes=notes
+        notes=notes,
+        last_modified=datetime.utcnow()
     )
     session.add(cred)
     session.commit()
@@ -30,12 +33,16 @@ def list_credentials(user_id: int):
     creds = session.query(Credential).filter_by(user_id=user_id).all()
     result = []
     for c in creds:
+        try:
+            password = decrypt(c.password_encrypted)
+        except Exception:
+            password = "[ERRO NA CRIPTOGRAFIA]"
         result.append({
             'id': c.id,
             'site_name': c.site_name,
             'url': c.url,
             'username': c.username,
-            'password': decrypt_password(c.password_encrypted),
+            'password': password,
             'notes': c.notes
         })
     session.close()
@@ -50,9 +57,10 @@ def update_credential(cred_id: int, user_id: int, **kwargs):
         return False
     for key, value in kwargs.items():
         if key == 'password':
-            setattr(cred, 'password_encrypted', encrypt_password(value))
+            setattr(cred, 'password_encrypted', encrypt(value))
         elif hasattr(cred, key):
             setattr(cred, key, value)
+    cred.last_modified = datetime.utcnow()
     session.commit()
     session.close()
     return True
