@@ -35,6 +35,20 @@ Este sistema permite gerenciar credenciais de sites e senhas de forma segura, vi
    - Nunca compartilhe sua senha mestre.
    - As senhas das credenciais são armazenadas de forma criptografada.
 
+## Interface Web
+- Para usar via navegador, execute:
+  ```bash
+  python frontend/web/app.py
+  ```
+  e acesse http://localhost:5000
+- Faça login/cadastro normalmente.
+- Gerencie credenciais, edite, exclua, exporte e importe backups pela interface web.
+
+## Backup e Restauração na Web
+- Use o botão "Exportar/Backup" para baixar todas as suas credenciais.
+- Use o formulário "Importar backup" para restaurar credenciais de um arquivo `.backup`.
+- O sistema evita duplicidade de credenciais ao importar.
+
 ## Backup e Restauração
 - Use o botão "Exportar/Backup" para salvar todas as suas credenciais em um arquivo seguro.
 - Use o botão "Importar/Restaurar" para recuperar credenciais de um backup.

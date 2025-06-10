@@ -62,3 +62,17 @@ gerenciador-sites/
 ## Segurança Adicional
 - Cada credencial armazena a data da última alteração (last_modified).
 - O sistema alerta visualmente o usuário sobre senhas consideradas fracas e senhas não alteradas há mais de 90 dias. 
+
+## Interface Web (Flask)
+- O sistema pode ser acessado via navegador executando:
+  ```bash
+  python frontend/web/app.py
+  ```
+- Rotas principais:
+  - `/` login/cadastro
+  - `/dashboard` dashboard do usuário
+  - `/add`, `/edit/<id>`, `/delete/<id>` CRUD de credenciais
+  - `/export` exporta backup criptografado
+  - `/import` importa backup criptografado
+- A interface web utiliza Bootstrap para visual moderno e responsivo.
+- Toda a lógica de autenticação, criptografia e backup é compartilhada com o backend desktop. 
