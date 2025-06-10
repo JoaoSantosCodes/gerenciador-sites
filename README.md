@@ -65,4 +65,16 @@ pip install -r requirements.txt
 
 ## Contato
 
-[Seu nome/email será adicionado] 
+[Seu nome/email será adicionado]
+
+## Configuração de variáveis de ambiente (.env)
+
+Crie um arquivo `.env` na raiz do projeto com o seguinte conteúdo:
+
+```
+SECRET_KEY=sua_chave_super_secreta
+DATABASE_URL=sqlite:///database/password_manager.db
+FLASK_ENV=development
+```
+
+O backend carrega automaticamente essas variáveis ao iniciar. Nunca compartilhe seu `.env` real, use `.env.example` para referência. 

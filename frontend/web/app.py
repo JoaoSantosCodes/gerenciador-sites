@@ -253,14 +253,5 @@ def import_backup():
         flash(f'Erro ao importar backup: {e}', 'danger')
     return redirect(url_for('dashboard'))
 
-# Função utilitária para obter o user_id
-from backend.database.models import SessionLocal, User
-
-def get_user_id(username):
-    session = SessionLocal()
-    user = session.query(User).filter_by(username=username).first()
-    session.close()
-    return user.id if user else None
-
 if __name__ == '__main__':
     app.run(debug=True) 

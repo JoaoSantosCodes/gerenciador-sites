@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Gerenciador de Senhas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; margin: 0; padding: 0; }
+        .container { max-width: 400px; margin: 40px auto; background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 2px 8px #0001; }
+        h2 { text-align: center; }
+        input, button, textarea { width: 100%; margin: 8px 0; padding: 8px; border-radius: 4px; border: 1px solid #ccc; }
+        button { background: #1976d2; color: #fff; border: none; cursor: pointer; }
+        button:hover { background: #125ea2; }
+        .cred-list { margin-top: 24px; }
+        .cred-item { background: #f9f9f9; border: 1px solid #eee; border-radius: 4px; padding: 12px; margin-bottom: 12px; }
+        .actions { display: flex; gap: 8px; }
+        .error { color: #c00; text-align: center; }
+        .success { color: #080; text-align: center; }
+        .logout { float: right; background: #c00; }
+    </style>
+</head>
+<body>
+<div class="container" id="main">
+    <h2>Gerenciador de Senhas</h2>
+    <div id="msg"></div>
+    <div id="auth">
+        <input type="text" id="username" placeholder="Usuário">
+        <input type="password" id="password" placeholder="Senha">
+        <button onclick="login()">Entrar</button>
+        <button onclick="showRegister()">Cadastrar</button>
+    </div>
+    <div id="register" style="display:none;">
+        <input type="text" id="reg_username" placeholder="Usuário">
+        <input type="password" id="reg_password" placeholder="Senha">
+        <button onclick="register()">Cadastrar</button>
+        <button onclick="showLogin()">Voltar</button>
+    </div>
+    <div id="app" style="display:none;">
+        <button class="logout" onclick="logout()">Logout</button>
+        <h3>Nova Credencial</h3>
+        <input type="text" id="site_name" placeholder="Site/App">
+        <input type="text" id="url" placeholder="URL">
+        <input type="text" id="cred_username" placeholder="Usuário no site">
+        <input type="password" id="cred_password" placeholder="Senha do site">
+        <textarea id="notes" placeholder="Notas"></textarea>
+        <button onclick="addCredential()">Adicionar</button>
+        <h3>Minhas Credenciais</h3>
+        <div class="cred-list" id="credList"></div>
+    </div>
+</div>
+<script>
+const api = 'http://localhost:5000/api';
+let editingId = null;
+
+function showMsg(msg, type='error') {
+    document.getElementById('msg').innerHTML = `<div class="${type}">${msg}</div>`;
+    if(type === 'error') {
+        console.error('[FRONTEND][ERRO]', msg);
+    } else {
+        console.info('[FRONTEND][OK]', msg);
+    }
+    setTimeout(() => document.getElementById('msg').innerHTML = '', 4000);
+}
+
+function showRegister() {
+    document.getElementById('auth').style.display = 'none';
+    document.getElementById('register').style.display = '';
+}
+function showLogin() {
+    document.getElementById('register').style.display = 'none';
+    document.getElementById('auth').style.display = '';
+}
+function showApp() {
+    document.getElementById('auth').style.display = 'none';
+    document.getElementById('register').style.display = 'none';
+    document.getElementById('app').style.display = '';
+    loadCredentials();
+}
+function showAuth() {
+    document.getElementById('app').style.display = 'none';
+    document.getElementById('auth').style.display = '';
+}
+
+function register() {
+    fetch(api + '/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            username: document.getElementById('reg_username').value,
+            password: document.getElementById('reg_password').value
+        }),
+        credentials: 'include'
+    })
+    .then(r => r.json().then(data => ({status: r.status, data})))
+    .then(res => {
+        if (res.status === 200) {
+            showMsg('Cadastro realizado! Faça login.', 'success');
+            showLogin();
+        } else {
+            showMsg(res.data.error || 'Erro ao cadastrar.');
+        }
+    })
+    .catch(e => showMsg('Erro de conexão ao cadastrar.'));
+}
+
+function login() {
+    fetch(api + '/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            username: document.getElementById('username').value,
+            password: document.getElementById('password').value
+        }),
+        credentials: 'include'
+    })
+    .then(r => r.json().then(data => ({status: r.status, data})))
+    .then(res => {
+        if (res.status === 200) {
+            showApp();
+        } else {
+            showMsg(res.data.error || 'Erro ao fazer login.');
+        }
+    })
+    .catch(e => showMsg('Erro de conexão ao fazer login.'));
+}
+
+function logout() {
+    fetch(api + '/logout', {
+        method: 'POST',
+        credentials: 'include'
+    })
+    .then(() => {
+        showAuth();
+    });
+}
+
+function addCredential() {
+    const site = document.getElementById('site_name').value;
+    const url = document.getElementById('url').value;
+    const username = document.getElementById('cred_username').value;
+    const password = document.getElementById('cred_password').value;
+    const notes = document.getElementById('notes').value;
+    if (!site || !username || !password) {
+        showMsg('Preencha os campos obrigatórios.');
+        return;
+    }
+    fetch(api + '/credentials', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ site_name: site, url, username, password, notes })
+    })
+    .then(r => r.json().then(data => ({status: r.status, data})))
+    .then(res => {
+        if (res.status === 200) {
+            showMsg('Credencial adicionada!', 'success');
+            document.getElementById('site_name').value = '';
+            document.getElementById('url').value = '';
+            document.getElementById('cred_username').value = '';
+            document.getElementById('cred_password').value = '';
+            document.getElementById('notes').value = '';
+            loadCredentials();
+        } else {
+            showMsg(res.data.error || 'Erro ao adicionar credencial.');
+        }
+    })
+    .catch(e => showMsg('Erro de conexão ao adicionar credencial.'));
+}
+
+function loadCredentials() {
+    fetch(api + '/credentials', {
+        credentials: 'include'
+    })
+    .then(r => r.json().then(data => ({status: r.status, data})))
+    .then(res => {
+        if (res.status === 200) {
+            renderCredList(res.data);
+        } else {
+            showMsg('Sessão expirada. Faça login novamente.');
+            showAuth();
+        }
+    });
+}
+
+function renderCredList(creds) {
+    const list = document.getElementById('credList');
+    list.innerHTML = '';
+    if (!creds.length) {
+        list.innerHTML = '<em>Nenhuma credencial cadastrada.</em>';
+        return;
+    }
+    creds.forEach(c => {
+        list.innerHTML += `<div class="cred-item">
+            <b>${c.site_name}</b> <br>
+            <small>${c.url || ''}</small><br>
+            Usuário: <b>${c.username}</b><br>
+            Senha: <input type='text' value='${c.password}' readonly style='width:70%;'>
+            <br>
+            Notas: <i>${c.notes || ''}</i><br>
+            <div class='actions'>
+                <button onclick='editCredential(${c.id}, this)'>Editar</button>
+                <button onclick='deleteCredential(${c.id})'>Excluir</button>
+            </div>
+        </div>`;
+    });
+}
+
+function editCredential(id, btn) {
+    const item = btn.closest('.cred-item');
+    const site = prompt('Novo nome do site:', item.querySelector('b').innerText);
+    const url = prompt('Nova URL:', item.querySelector('small').innerText);
+    const username = prompt('Novo usuário:', item.querySelector('b + br + small + br').nextSibling.textContent.replace('Usuário: ', ''));
+    const password = prompt('Nova senha:', item.querySelector('input').value);
+    const notes = prompt('Novas notas:', item.querySelector('i').innerText);
+    fetch(api + '/credentials/' + id, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ site_name: site, url, username, password, notes })
+    })
+    .then(r => r.json().then(data => ({status: r.status, data})))
+    .then(res => {
+        if (res.status === 200) {
+            showMsg('Credencial atualizada!', 'success');
+            loadCredentials();
+        } else {
+            showMsg(res.data.error || 'Erro ao atualizar credencial.');
+        }
+    })
+    .catch(e => showMsg('Erro de conexão ao atualizar credencial.'));
+}
+
+function deleteCredential(id) {
+    if (!confirm('Tem certeza que deseja excluir?')) return;
+    fetch(api + '/credentials/' + id, {
+        method: 'DELETE',
+        credentials: 'include'
+    })
+    .then(r => r.json().then(data => ({status: r.status, data})))
+    .then(res => {
+        if (res.status === 200) {
+            showMsg('Credencial excluída!', 'success');
+            loadCredentials();
+        } else {
+            showMsg(res.data.error || 'Erro ao excluir credencial.');
+        }
+    })
+    .catch(e => showMsg('Erro de conexão ao excluir credencial.'));
+}
+</script>
+</body>
+</html> 
