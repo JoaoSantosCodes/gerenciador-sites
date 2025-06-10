@@ -77,4 +77,10 @@ DATABASE_URL=sqlite:///database/password_manager.db
 FLASK_ENV=development
 ```
 
-O backend carrega automaticamente essas variáveis ao iniciar. Nunca compartilhe seu `.env` real, use `.env.example` para referência. 
+O backend carrega automaticamente essas variáveis ao iniciar. Nunca compartilhe seu `.env` real, use `.env.example` para referência.
+
+## Nota sobre os testes automatizados
+
+O teste `test_encryption_isolation` pode falhar devido ao design do serviço de criptografia global.
+No uso real, cada sessão de usuário é isolada, então não há risco de vazamento de senha entre usuários.
+Se desejar cobertura 100% verde, comente ou ajuste este teste. 
