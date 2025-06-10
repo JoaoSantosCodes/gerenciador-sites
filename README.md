@@ -2,14 +2,28 @@
 
 Um aplicativo Python seguro para gerenciar credenciais de sites (URLs, nomes de usuário e senhas) com funcionalidades de login e criptografia.
 
-## Funcionalidades
+## Documentação
+- [Manual do Usuário](docs/README_USUARIO.md)
+- [Documentação Técnica](docs/README_TECNICO.md)
+- [Planejamento do Projeto](PLANNING.md)
 
+## Como rodar
+```bash
+pip install -r requirements.txt
+python -m backend.app
+```
+
+## Funcionalidades
 - Sistema de autenticação seguro
-- Gerenciamento de credenciais
-- Criptografia AES-256
-- Gerador de senhas seguras
-- Backup e restauração de dados
-- Interface desktop (Tkinter) e web (Flask)
+- Gerenciamento de credenciais (CRUD)
+- Criptografia (placeholder, será AES-256)
+- Pronto para expansão com interface gráfica
+
+## Contribuição
+Consulte a [documentação técnica](docs/README_TECNICO.md#como-contribuir).
+
+## Licença
+MIT
 
 ## Requisitos
 
@@ -45,18 +59,6 @@ pip install -r requirements.txt
 - Todas as senhas são armazenadas com criptografia AES-256
 - Senha mestre protegida com hashing seguro
 - Autenticação em dois fatores (opcional)
-
-## Contribuição
-
-1. Faça um Fork do projeto
-2. Crie uma Branch para sua Feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a Branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
-
-## Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
 
 ## Contato
 
